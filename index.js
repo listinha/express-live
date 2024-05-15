@@ -17,7 +17,10 @@ app.get('/', function (req, res) {
     userName = req.query.name
   }
 
-  res.send(`Hello World, you are <strong>${userName}</strong>!`)
+  let content = `<p>Hello World, you are <strong>${userName}</strong>!</p>`
+  content += "<p>Best viewed in 800x600</p>"
+
+  res.send(content)
 })
 
 app.listen(3000)
