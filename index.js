@@ -1,20 +1,19 @@
 const express = require('express');
 const process = require('node:process');
 const { inspect } = require('node:util');
-const { Client } = require('pg');
-// import pg from 'pg'
-// const { Client } = pg
+const pg = require('pg');
 
-const client = new Client({
-  ssl: {
-    rejectUnauthorized: false
-  },
-  // user: 'database-user',
-  // password: 'secretpassword!!',
-  // host: 'my.database-server.com',
-  // port: 5334,
-  // database: 'express_live',
-});
+if (process.env.NODE_ENV === 'production') {
+  var pgOptions = {
+    ssl: {
+      rejectUnauthorized: false
+    },
+  }
+} else {
+  var pgOptions = { database: 'express_live' };
+}
+
+const client = new pg.Client(pgOptions);
 
 (async function() {
   console.log('Connecting to DB...');
@@ -44,16 +43,40 @@ app.get('/', async (req, res) => {
     userName = req.query.name
   }
 
-  let content = `<p>Hello World, you are <strong>${userName}</strong>!</p>`;
+  let content = `
+  <!DOCTYPE html>
+  <html lang="en" dir="ltr">
+    <head>
+      <meta charset="utf-8">
+      <title>Todo List</title>
+      <style type="text/css">
+      .todo_list {
+        padding: 0px;
+      }
+      .todo_list li {
+        list-style-type: none;
+      }
+      </style>
+    </head>
+    <body>
+  `;
+
+  content += `<p>Hello World, you are <strong>${userName}</strong>!</p>`;
   content += "<p>Best viewed in 800x600</p>";
   content += `<p>Requested host is <i>${hostHeader}</i></p>`;
 
-  content += "<ul>";
+  content += '<ul class="todo_list">';
   const result = await client.query('SELECT id, description, status FROM items;');
   for (let row of result.rows) {
-    content += `<li>${row.description}</li>`;
+    const status = (row.status === 1 ? '⚫️' : '☑️');
+
+    content += `<li>${status} ${row.description}</li>`;
   }
   content += "</ul>";
+
+  content += `
+    </body>
+  </html>`;
 
   res.send(content);
 });

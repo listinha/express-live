@@ -14,5 +14,7 @@ RUN set -eux ; \
 
 COPY index.js /app/
 
+EXPOSE 3000
+
 ENTRYPOINT ["/usr/local/bin/gosu"]
 CMD ["1001", "node", "/app/index.js"]
