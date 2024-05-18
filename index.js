@@ -10,7 +10,7 @@ const client = new Client({
   // password: 'secretpassword!!',
   // host: 'my.database-server.com',
   // port: 5334,
-  database: 'express_live',
+  // database: 'express_live',
 });
 
 (async function() {
