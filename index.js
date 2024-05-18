@@ -6,6 +6,9 @@ const { Client } = require('pg');
 // const { Client } = pg
 
 const client = new Client({
+  ssl: {
+    rejectUnauthorized: false
+  },
   // user: 'database-user',
   // password: 'secretpassword!!',
   // host: 'my.database-server.com',
